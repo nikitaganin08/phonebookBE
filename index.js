@@ -23,9 +23,8 @@ const errorHandler = (error, request, response, next) => {
 }
 
 app.get('/api/persons', ((req, res) =>
-        Person.find({}).then(persons => {
-            res.json(persons)
-        })
+        Person.find({})
+            .then(persons => res.json(persons))
 ))
 
 app.get('/info', ((req, res) =>
@@ -37,24 +36,24 @@ app.get('/info', ((req, res) =>
 ))
 
 app.get('/api/persons/:id', ((req, res, next) => {
-    Person.findById(req.params.id).then(person => {
-        if (person) {
-            res.json(person)
-        } else {
-            res.status(404).end()
-        }
-    })
+    Person.findById(req.params.id)
+        .then(person => {
+            if (person) {
+                res.json(person)
+            } else {
+                res.status(404).end()
+            }
+        })
         .catch(error => next(error))
 }))
 
-app.delete('/api/persons/:id', ((req, res, next) => {
-    Person.findByIdAndDelete(req.params.id).then(person => {
-        res.status(204).end()
-    })
+app.delete('/api/persons/:id', (req, res, next) => {
+    Person.findByIdAndDelete(req.params.id)
+        .then(person => res.status(204).end())
         .catch(error => next(error))
-}))
+})
 
-app.post('/api/persons', ((req, res) => {
+app.post('/api/persons', (req, res) => {
     const body = req.body
     if (!body.name || !body.number) {
         return res.status(404).json({
@@ -67,10 +66,27 @@ app.post('/api/persons', ((req, res) => {
         number: body.number
     })
 
-    person.save().then(savedPerson => {
-        res.json(savedPerson)
-    })
-}))
+    person.save()
+        .then(savedPerson => res.json(savedPerson))
+})
+
+app.put('/api/persons/:id', (req, res, next) => {
+    const body = req.body
+    const person = {
+        name: body.name,
+        number: body.number
+    }
+    console.log(req.params.id)
+    Person.findByIdAndUpdate(req.params.id, person, {new: true})
+        .then(updatedPerson => {
+            console.log(updatedPerson)
+            res.json(updatedPerson)
+        })
+        .catch(error => {
+            console.log('Catch error', error)
+            next(error)
+        })
+})
 
 const unknownEndpoint = (request, response) => {
     response.status(404).send({error: 'unknown endpoint'})

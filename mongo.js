@@ -9,7 +9,7 @@ const password = process.argv[2]
 
 const url = `mongodb+srv://fullstackopen:${password}@cluster0.qoqeu.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
 
-mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true})
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
 const personSchema = new mongoose.Schema({
     name: String,
